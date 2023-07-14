@@ -1,6 +1,6 @@
 import moviepy.editor as mpe
-# import moviepy.video.fx.all as vfx
 import moviepy.video.fx.all as vfx
+from image import generate_caption_image
 
 # youtube shorts should be 1080 x 1920
 # under 60 seconds
@@ -27,28 +27,44 @@ def wraptext(text:str,spreadWidth:int,fontsize:int) -> str:
     return out
 
 
-def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path):
+def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None):
+    clip_duration = 15
+    
     clip = mpe.VideoFileClip(background_clip_path)
     clip = clip.subclip(0,15)
 
-    clip,width,height = fit_video_to_9_16(clip)
+    clip,clip_width,clip_height = fit_video_to_9_16(clip)
+    
 
-    txt1 = mpe.TextClip(
-            wraptext(text1,width * 0.8,75),
-            fontsize=75,
-            color="yellow",
-            stroke_color="black",
-            stroke_width=2,
-            font="Arial",
-            align="south"
-        )
-    txt1 = txt1.set_position("center")
-    txt1 = txt1.set_duration(10)
+    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=100,output_path="label.png",fill_background="black",text_fill="white")
 
-    out = mpe.CompositeVideoClip([clip,txt1])
-    out = out.set_duration(15)
+    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.6,fontsize=70,output_path="text1.png",text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
-    out.write_videofile("out.mp4")
+    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.6,fontsize=70,output_path="text2.png",text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+
+    label_clip = mpe.ImageClip(label_image_path,duration=15)
+
+    label_clip = label_clip.set_position(("center",0.2),relative=True)
+
+    text1_clip = mpe.ImageClip(text1_image_path,transparent=True)
+    text1_clip = text1_clip.set_start(0)
+    text1_clip = text1_clip.set_duration(clip_duration * 2/3)
+    text1_clip = text1_clip.set_position(("center",0.4),relative=True)
+
+    text2_clip = mpe.ImageClip(text2_image_path,transparent=True)
+    text2_clip = text2_clip.set_start(12)
+    text2_clip = text2_clip.set_duration(3)
+    text2_clip = text2_clip.set_position(("center",0.4),relative=True)
+
+
+    out = mpe.CompositeVideoClip([clip,label_clip,text1_clip,text2_clip])
+    out = out.set_duration(clip_duration)
+
+    if(music_file_path):
+        audio = mpe.AudioFileClip(music_file_path).set_duration(clip_duration)
+        out = out.set_audio(audio)
+
+    out.write_videofile(out_file_path)
 
 
 def fit_video_to_9_16(clip:mpe.VideoFileClip) -> tuple[mpe.VideoFileClip,int,int]:
@@ -62,4 +78,4 @@ def fit_video_to_9_16(clip:mpe.VideoFileClip) -> tuple[mpe.VideoFileClip,int,int
 
 
 if __name__ == "__main__":
-    generateVideo("kalanz","text1 sample text long hello world hello the cat jump car","text2 sample text","crazy facts!","sample.mp4")
+    generateVideo("kalanz","if a girl loves a guy...","he will be on her mind every minute of the day.","GIRL FACTS","sample.mp4")
