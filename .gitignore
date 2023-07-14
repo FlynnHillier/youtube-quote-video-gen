@@ -1,2 +1,6 @@
 # dependencies
 venv
+
+# media files
+*.mp4
+*.mp3
