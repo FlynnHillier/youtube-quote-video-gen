@@ -46,21 +46,30 @@ def wraptext(text:str,maxWidth:int,fontSize:int) -> tuple[list[str],int,int]:
 
 
 
-def generate_caption_image(text:str,maxWidth:int,fontsize:int,output_path:str) -> str:
+def generate_caption_image(
+        text:str,
+        maxWidth:int,
+        fontsize:int,
+        output_path:str,
+        fill_background:str | tuple[int,int,int] | None = None,
+        text_fill:str | tuple[int,int,int] = (0,0,0),
+        text_stroke_fill: str | tuple[int,int,int] = (0,0,0), 
+        text_stroke_width: int = 0,
+    ) -> str:
 
     font = ImageFont.truetype("arial.ttf", fontsize)
 
     lines, text_width, text_height = wraptext(text,maxWidth,fontsize)
 
     # when font.getsize() is fixed, use offset_x instead of hardcode value '+5'
-    img = Image.new(mode="RGB",size = (text_width + 5,text_height),color="black")
+    img = Image.new(mode="RGBA",size = (text_width + 5,text_height),color=fill_background)
 
     draw = ImageDraw.Draw(img)
-    draw.text((0,0),"\n ".join(lines),fill=(255,255,0),font=font,stroke_fill="black",stroke_width=2)
+    draw.text((0,0),"\n ".join(lines),fill=text_fill,font=font,stroke_fill=text_stroke_fill,stroke_width=text_stroke_width)
 
     img.save(output_path,format="png")
 
     return output_path
     
 if __name__ == "__main__":
-    generate_caption_image("the cat jumped over a lazy fox",300,35)
+    generate_caption_image("the cat jumped over hello",300,35,"test.png")
