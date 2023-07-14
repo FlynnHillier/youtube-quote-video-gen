@@ -15,7 +15,6 @@ def wraptext(text:str,maxWidth:int,fontSize:int) -> tuple[list[str],int,int]:
 
         if font.getlength(temp) > maxWidth:
             lines.append(line)
-            print(font.getlength(line))
             line = word
         else:
             line = temp
