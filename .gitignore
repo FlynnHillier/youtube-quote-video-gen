@@ -4,3 +4,10 @@ venv
 # media files
 *.mp4
 *.mp3
+
+#byte files
+__pycache__
+
+#assets
+out
+assets
