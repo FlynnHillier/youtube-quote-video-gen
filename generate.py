@@ -1,6 +1,7 @@
 import moviepy.editor as mpe
 import moviepy.video.fx.all as vfx
 from image import generate_caption_image
+from pathlib import Path
 
 # youtube shorts should be 1080 x 1920
 # under 60 seconds
@@ -27,7 +28,7 @@ def wraptext(text:str,spreadWidth:int,fontsize:int) -> str:
     return out
 
 
-def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None):
+def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None,generated_assets_folder_path:str | None = None):
     clip_duration = 15
     
     clip = mpe.VideoFileClip(background_clip_path)
@@ -36,11 +37,11 @@ def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_pa
     clip,clip_width,clip_height = fit_video_to_9_16(clip)
     
 
-    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=100,output_path="label.png",fill_background="black",text_fill="white")
+    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=100,output_path=str(Path(generated_assets_folder_path,"label.png")),fill_background="black",text_fill="white")
 
-    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.6,fontsize=70,output_path="text1.png",text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.6,fontsize=70,output_path=str(Path(generated_assets_folder_path,"txt1.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
-    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.6,fontsize=70,output_path="text2.png",text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.6,fontsize=70,output_path=str(Path(generated_assets_folder_path,"txt2.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
     label_clip = mpe.ImageClip(label_image_path,duration=15)
 
