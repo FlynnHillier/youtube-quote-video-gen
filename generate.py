@@ -2,6 +2,8 @@ import moviepy.editor as mpe
 import moviepy.video.fx.all as vfx
 from image import generate_caption_image
 from pathlib import Path
+from animations import fade_in
+from reusable_clips import subscribe_image_animation
 
 # youtube shorts should be 1080 x 1920
 # under 60 seconds
@@ -28,6 +30,7 @@ def wraptext(text:str,spreadWidth:int,fontsize:int) -> str:
     return out
 
 
+
 def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None,generated_assets_folder_path:str | None = None):
     clip_duration = 15
     
@@ -37,28 +40,45 @@ def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_pa
     clip,clip_width,clip_height = fit_video_to_9_16(clip)
     
 
-    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=100,output_path=str(Path(generated_assets_folder_path,"label.png")),fill_background="black",text_fill="white")
+    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=140,output_path=str(Path(generated_assets_folder_path,"label.png")),fill_background="black",text_fill="white")
 
-    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.6,fontsize=70,output_path=str(Path(generated_assets_folder_path,"txt1.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.8,fontsize=100,output_path=str(Path(generated_assets_folder_path,"txt1.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
-    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.6,fontsize=70,output_path=str(Path(generated_assets_folder_path,"txt2.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.8,fontsize=100,output_path=str(Path(generated_assets_folder_path,"txt2.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
     label_clip = mpe.ImageClip(label_image_path,duration=15)
 
     label_clip = label_clip.set_position(("center",0.2),relative=True)
 
     text1_clip = mpe.ImageClip(text1_image_path,transparent=True)
+    text1_clip = fade_in(text1_clip,animation_duration=1.5)
     text1_clip = text1_clip.set_start(0)
     text1_clip = text1_clip.set_duration(clip_duration * 2/3)
     text1_clip = text1_clip.set_position(("center",0.4),relative=True)
 
     text2_clip = mpe.ImageClip(text2_image_path,transparent=True)
+    text2_clip = fade_in(text2_clip,animation_duration=1.5)
     text2_clip = text2_clip.set_start(12)
     text2_clip = text2_clip.set_duration(3)
     text2_clip = text2_clip.set_position(("center",0.4),relative=True)
 
 
-    out = mpe.CompositeVideoClip([clip,label_clip,text1_clip,text2_clip])
+    
+    
+    watermark_start_show_time = 8
+    
+    subscribe_clip = subscribe_image_animation(clip_height * 0.8 ,0.5,clip_width,duration_start=2,animation_duration=3,presence_duration=6)
+
+    watermark_image_path = generate_caption_image(watermark,clip_width,60,fill_background=None,text_fill="black",text_stroke_fill="white",text_stroke_width=1,output_path=str(Path(generated_assets_folder_path,"watermark.png")))
+
+    watermark_clip = mpe.ImageClip(watermark_image_path).set_start(watermark_start_show_time).set_duration(clip_duration - watermark_start_show_time)
+
+    watermark_clip = watermark_clip.set_position(("center",0.8),relative=True)
+
+    watermark_clip = watermark_clip.set_opacity(0.4)
+
+
+    out = mpe.CompositeVideoClip([clip,label_clip,text1_clip,text2_clip,subscribe_clip,watermark_clip])
     out = out.set_duration(clip_duration)
 
     if(music_file_path):

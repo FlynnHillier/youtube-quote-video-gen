@@ -36,9 +36,8 @@ def slide_in_horizontal(
         height_pos:int,
         destination:float = 0.5
     ) -> VideoClip.VideoClip:
-    img_width, img_height = image.size
-    print(img_width,img_height)
 
+    img_width, img_height = image.size
     initial_position_x = 0
 
     #invert destination if coming from right
