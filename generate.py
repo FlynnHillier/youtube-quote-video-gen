@@ -90,8 +90,17 @@ def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_pa
 
 def fit_video_to_9_16(clip:mpe.VideoFileClip) -> tuple[mpe.VideoFileClip,int,int]:
     (w, h) = clip.size
+
+    #calculate correct width dimensions
+    width_mid_point = w / 2
     crop_width = h * 9/16
-    x1, x2 = (w - crop_width)//2, (w+crop_width)//2
+    x1 = int(width_mid_point - (crop_width / 2))
+    x2 = int(width_mid_point + (crop_width / 2))
+
+    #if odd pixel width, make even. Added to prevent video chorruption. Not sure why it works, but it seems to.
+    if (x2 - x1) % 2 != 0:
+        x2 -= 1
+
     y1, y2 = 0, h
 
     cropped_clip = vfx.crop(clip, x1=x1, y1=y1, x2=x2, y2=y2)
