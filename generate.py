@@ -4,6 +4,8 @@ from image import generate_caption_image
 from pathlib import Path
 from animations import fade_in
 from reusable_clips import subscribe_image_animation
+import os
+import random
 
 # youtube shorts should be 1080 x 1920
 # under 60 seconds
@@ -29,6 +31,26 @@ def wraptext(text:str,spreadWidth:int,fontsize:int) -> str:
     
     return out
 
+
+def get_random_file_from_dir(directory:str,extension:str = None) -> str:
+    # if provided directory is invalid
+    if not os.path.isdir(directory):
+        raise FileNotFoundError(f"the directory '{directory}' does not exist.")
+    
+    # add leading period to extension
+    if extension != None and extension[0] != ".":
+        extension = "." + extension
+    
+    contents = os.listdir(directory)
+    contents = list(map(lambda file: Path(directory).joinpath(file),contents))
+
+    targets = list(filter(lambda path: os.path.isfile(path) and (True if extension == None else Path(path).suffix == extension),contents))
+
+    # if no file are found that match the criteria
+    if len(targets) == 0:
+        raise FileNotFoundError(f"no files were found in the directory '{directory}'{'' if extension == None else f' , with file extension: .{extension}'}")
+    
+    return random.choice(targets)
 
 
 def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None,generated_assets_folder_path:str | None = None):
