@@ -1,0 +1,7 @@
+{
+    "watermark":"",
+    "label":"shorts",
+    "inputs_delimeter":"|",
+    "out_dir":"out",
+    "temp_assets_dir":"temp"
+}
