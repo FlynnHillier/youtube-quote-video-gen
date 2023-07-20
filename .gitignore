@@ -12,3 +12,5 @@ __pycache__
 out
 assets/videos
 assets/music
+temp
+inputs.txt
