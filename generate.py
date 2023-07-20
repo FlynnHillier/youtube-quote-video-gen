@@ -50,12 +50,35 @@ def get_random_file_from_dir(directory:str,extension:str = None) -> str:
     if len(targets) == 0:
         raise FileNotFoundError(f"no files were found in the directory '{directory}'{'' if extension == None else f' , with file extension: .{extension}'}")
     
-    return random.choice(targets)
+    return str(random.choice(targets))
 
 
-def generateVideo(watermark:str,text1:str,text2:str,label:str,background_clip_path:str,out_file_path:str,music_file_path:str | None = None,generated_assets_folder_path:str | None = None):
-    clip_duration = 15
+def generateVideo(
+        watermark:str,
+        text1:str,
+        text2:str,
+        label:str,
+        out_file_path:str,
+        media_folder:str | None,
+        background_clip_path:str | None = None,
+        music_file_path:str | None = None,
+        generated_assets_folder_path:str | None = None
+    ):
+
+    # query correct media argument paramters.
+    if not media_folder and not (background_clip_path and music_file_path):
+        raise ValueError(f"must specify media folder path, or both background clip path and music file path")
+
+    # select media file paths if specific file paths not specified.
+    if background_clip_path == None:
+        background_clip_path = get_random_file_from_dir(str(Path(media_folder).joinpath("videos")))
+
+    if music_file_path == None:
+        music_file_path = get_random_file_from_dir(str(Path(media_folder).joinpath("music")))
     
+
+    clip_duration = 15
+
     clip = mpe.VideoFileClip(background_clip_path)
     clip = clip.subclip(0,15)
 
