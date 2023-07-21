@@ -83,13 +83,15 @@ def generateVideo(
     clip = clip.subclip(0,15)
 
     clip,clip_width,clip_height = fit_video_to_9_16(clip)
+
+    base_font_size = int(clip_height / 22)
     
 
-    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=140,output_path=str(Path(generated_assets_folder_path,"label.png")),fill_background="black",text_fill="white")
+    label_image_path = generate_caption_image(label,maxWidth=clip_width,fontsize=(base_font_size * 1.4),output_path=str(Path(generated_assets_folder_path,"label.png")),fill_background="black",text_fill="white")
 
-    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.8,fontsize=100,output_path=str(Path(generated_assets_folder_path,"txt1.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text1_image_path = generate_caption_image(text1,maxWidth=clip_width * 0.8,fontsize=base_font_size,output_path=str(Path(generated_assets_folder_path,"txt1.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
-    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.8,fontsize=100,output_path=str(Path(generated_assets_folder_path,"txt2.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
+    text2_image_path = generate_caption_image(text2,maxWidth=clip_width * 0.8,fontsize=base_font_size,output_path=str(Path(generated_assets_folder_path,"txt2.png")),text_fill=(255,255,255),text_stroke_fill=(0,0,0),text_stroke_width=2)
 
     label_clip = mpe.ImageClip(label_image_path,duration=15)
 
@@ -114,7 +116,7 @@ def generateVideo(
     
     subscribe_clip = subscribe_image_animation(clip_height * 0.8 ,0.5,clip_width,duration_start=2,animation_duration=3,presence_duration=6)
 
-    watermark_image_path = generate_caption_image(watermark,clip_width,60,fill_background=None,text_fill="black",text_stroke_fill="white",text_stroke_width=1,output_path=str(Path(generated_assets_folder_path,"watermark.png")))
+    watermark_image_path = generate_caption_image(watermark,clip_width,fontsize=base_font_size * 0.6,fill_background=None,text_fill="black",text_stroke_fill="white",text_stroke_width=1,output_path=str(Path(generated_assets_folder_path,"watermark.png")))
 
     watermark_clip = mpe.ImageClip(watermark_image_path).set_start(watermark_start_show_time).set_duration(clip_duration - watermark_start_show_time)
 
@@ -150,7 +152,3 @@ def fit_video_to_9_16(clip:mpe.VideoFileClip) -> tuple[mpe.VideoFileClip,int,int
 
     cropped_clip = vfx.crop(clip, x1=x1, y1=y1, x2=x2, y2=y2)
     return cropped_clip,crop_width,h
-
-
-if __name__ == "__main__":
-    generateVideo("kalanz","if a girl loves a guy...","he will be on her mind every minute of the day.","GIRL FACTS","sample.mp4")
