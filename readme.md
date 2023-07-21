@@ -15,9 +15,9 @@
 - create folders: `videos` & `music` within the assets folder. Populate these folders with media that will be used to create the videos with.
 
 ## recommendations
-I would reccomend the use of a LLM, such as [open-ai's chat-gpt](https://chat.openai.com/), in order to generated the content within the `inputs.txt` file. Doing so will save you alot of time and make the content generation truly effortless.
+I would reccomend the use of an LLM, such as [open-ai's chat-gpt](https://chat.openai.com/), in order to generated the content within the `inputs.txt` file. Doing so will save you alot of time and make the content generation truly effortless.
 
-Here is an example of a prompt i used to generate the content used within the [example section](#demo) of this document:
+Here is an example of a prompt i used to generate the content used within the [example section](#example-videos) of this document:
 - `write a list of short quotes regarding girls, in a csv format, in which the build up to the quote is held in one colum, while the ending to the quote is held in the other column. These quotes should be targetted such that a young youtube audience would like them. These quotes should be approximately 15-25 words long. Please remove any quotation marks and any commas from within the quotes`
 
 
