@@ -20,7 +20,7 @@ def subscribe_image_animation(
     clip = slide_in_horizontal(
         img,
         animation_duration=animation_duration,
-        slide_in_from="right",
+        slide_in_from="left",
         parent_clip_width=parent_width,
         height_pos=vertical_pos,
         destination=destination_pos_x_as_percentage
